@@ -2,14 +2,8 @@
 class CTask(_name:String, _incomingId:String, _outgoingId:String) {
 
     private val name:String = _name
-    //private val id:String = _id
-    private val incomingId = _incomingId
-    private val outgoingId = _outgoingId
-
-
-//    fun getId():String {
-//        return id
-//    }
+    private val incomingId = _incomingId //предыдущее действие
+    private val outgoingId = _outgoingId //следующее действие
 
     fun getName():String {
         return name

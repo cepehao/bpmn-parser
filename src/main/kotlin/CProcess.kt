@@ -5,15 +5,12 @@ class CProcess(_name:String, _id:String) {
     private val id:String = _id //можно не запоминать id процесса из bpmn т.к.
                                 //для каждого нового процесса будет приходить uuid из веба?
 
-
     var tasks = mutableMapOf<String, CTask>()
     var intermediateCatchEvents = mutableMapOf<String, CIntermediateCatchEvent>()
     var endEvents = mutableMapOf<String, CEndEvent>()
     var exclusiveGateways = mutableMapOf<String, CExclusiveGateway>()
 
     private lateinit var startEvent:CStartEvent
-    //private lateinit var task:CTask
-    //private lateinit var endEvent:CEndEvent
 
     fun getId():String {
         return id

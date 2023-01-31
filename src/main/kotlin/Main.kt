@@ -4,7 +4,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 
 fun main(args: Array<String>) {
-    val path = "C:\\Users\\cepeh\\OneDrive\\Рабочий стол\\sel.bpmn"
+    val path = "" // .bpmn файл
 
     try {
         val file = File(path)
@@ -68,7 +68,6 @@ fun main(args: Array<String>) {
                 }
             }
         }
-
     }catch(e: Exception) {
         println("Error: " + e.message)
     }
