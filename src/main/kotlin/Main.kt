@@ -66,7 +66,7 @@ fun parseBPMN(uid: UID, path: String){
                 }
             }
         }
-        var x =5
+
     }catch(e: Exception) {
         println("Error: " + e.message)
     }
