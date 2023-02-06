@@ -5,12 +5,4 @@ class CExclusiveGateway(_name:String, _incomingId:String, _outgoingIdList:ArrayL
     private val incomingId = _incomingId
     private val outgoingIdList = _outgoingIdList //список возможных последующих действий
 
-    fun getName():String {
-        return name
-    }
-
-    fun getIncomingId():String{
-        return incomingId
-    }
-
 }

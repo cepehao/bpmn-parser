@@ -1,8 +1,10 @@
+import java.rmi.server.UID
+
 //весь процесс
-class CProcess(_name:String, _id:String) {
+class CProcess(_name:String, _id: UID) {
 
     private val name:String = _name
-    private val id:String = _id //можно не запоминать id процесса из bpmn т.к.
+    private val id:UID = _id //можно не запоминать id процесса из bpmn т.к.
                                 //для каждого нового процесса будет приходить uuid из веба?
 
     var tasks = mutableMapOf<String, CTask>()
@@ -11,14 +13,6 @@ class CProcess(_name:String, _id:String) {
     var exclusiveGateways = mutableMapOf<String, CExclusiveGateway>()
 
     private lateinit var startEvent:CStartEvent
-
-    fun getId():String {
-        return id
-    }
-
-    fun getName():String {
-        return name
-    }
 
     fun setStartEvent(_startEvent: CStartEvent) {
         startEvent = _startEvent
