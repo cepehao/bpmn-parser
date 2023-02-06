@@ -10,7 +10,6 @@ fun parseBPMN(uid: UID, path: String){
         val dbf = DocumentBuilderFactory.newInstance()
         val doc = dbf.newDocumentBuilder().parse(file)
 
-
         val processNode = doc.getElementsByTagName("semantic:process").item(0)
 
         val process = CProcess(processNode.attributes.getNamedItem("name").nodeValue, uid)
