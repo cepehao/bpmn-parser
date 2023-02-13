@@ -1,10 +1,10 @@
-import java.rmi.server.UID
+import java.util.UUID
 
 //весь процесс
-class CProcess(_name:String, _id: UID) {
+class CProcess(_name: String, _id: UUID) {
 
-    private val name:String = _name
-    private val id:UID = _id //можно не запоминать id процесса из bpmn т.к.
+    val name: String = _name
+    val id: UUID = _id //можно не запоминать id процесса из bpmn т.к.
                                 //для каждого нового процесса будет приходить uuid из веба?
 
     var tasks = mutableMapOf<String, CTask>()
@@ -12,17 +12,17 @@ class CProcess(_name:String, _id: UID) {
     var endEvents = mutableMapOf<String, CEndEvent>()
     var exclusiveGateways = mutableMapOf<String, CExclusiveGateway>()
 
-    private lateinit var startEvent:CStartEvent
+    var sstartEvent: CStartEvent? = null
 
-    fun setStartEvent(_startEvent: CStartEvent) {
-        startEvent = _startEvent
+    fun setStartEvent(_sstartEvent: CStartEvent) {
+        sstartEvent = _sstartEvent
     }
 
-    fun addTask(_id:String, _task:CTask) {
+    fun addTask(_id:String, _task: CTask) {
         tasks[_id] = _task
     }
 
-    fun addIntermediateCatchEvent(_id:String, _intermediateCatchEvent:CIntermediateCatchEvent) {
+    fun addIntermediateCatchEvent(_id:String, _intermediateCatchEvent: CIntermediateCatchEvent) {
         intermediateCatchEvents[_id] = _intermediateCatchEvent
     }
 
@@ -30,7 +30,7 @@ class CProcess(_name:String, _id: UID) {
         endEvents[_id] = _endEvent
     }
 
-    fun addExclusiveGateway(_id:String, _exclusiveGateway:CExclusiveGateway) {
+    fun addExclusiveGateway(_id:String, _exclusiveGateway: CExclusiveGateway) {
         exclusiveGateways[_id] = _exclusiveGateway
     }
 }

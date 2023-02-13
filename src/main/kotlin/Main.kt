@@ -1,10 +1,10 @@
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
-import java.rmi.server.UID
+import java.util.UUID
 import javax.xml.parsers.DocumentBuilderFactory
 
-fun parseBPMN(uid: UID, path: String){
+fun parseBPMN(uuid: UUID, path: String){ // сюда вторым параметром будет приходить сам файл
     try {
         val file = File(path)
         val dbf = DocumentBuilderFactory.newInstance()
@@ -12,7 +12,7 @@ fun parseBPMN(uid: UID, path: String){
 
         val processNode = doc.getElementsByTagName("semantic:process").item(0)
 
-        val process = CProcess(processNode.attributes.getNamedItem("name").nodeValue, uid)
+        val process = CProcess(processNode.attributes.getNamedItem("name").nodeValue, uuid)
 
         val processChildList = processNode.childNodes
         var processChild: Node
@@ -66,11 +66,12 @@ fun parseBPMN(uid: UID, path: String){
                 }
             }
         }
+        var x = 5
 
     }catch(e: Exception) {
         println("Error: " + e.message)
     }
 }
 fun main(args: Array<String>) {
-    parseBPMN(UID(), "C:\\Users\\cepeh\\OneDrive\\Рабочий стол\\sel.bpmn")
+    parseBPMN(UUID.randomUUID(), "C:\\Users\\cepeh\\OneDrive\\Рабочий стол\\sel.bpmn")
 }

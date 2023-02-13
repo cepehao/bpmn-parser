@@ -1,7 +1,7 @@
 //конечное действие
-class CEndEvent(_name:String, _incomingId:String) {
+class CEndEvent(_name: String, _incomingId: String) {
 
-    private val name:String = _name
-    private val incomingId:String = _incomingId //предыдущее действие
+    val name:String = _name
+    val incomingId:String = _incomingId //предыдущее действие
 
 }
