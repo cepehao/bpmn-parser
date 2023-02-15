@@ -4,6 +4,28 @@ import java.io.File
 import java.util.UUID
 import javax.xml.parsers.DocumentBuilderFactory
 
+fun getEvent(curNode: Node, nodeList: NodeList, eventType: EEventType) {
+    var nodeList = curNode.childNodes
+
+    var incomingList = arrayListOf<CIncoming>()
+    var outgoingList = arrayListOf<COutgoing>()
+
+    for (i:Int in 2..nodeList.length - 1) {
+        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
+        if (nodeList.item(i).nodeName == "semantic:incoming") {
+            incomingList.add(CIncoming(nodeList.item(i).textContent.substring(3)))
+        }
+
+        if (nodeList.item(i).nodeName == "semantic:outgoing") {
+            outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
+        }
+
+    }
+
+
+}
+
 fun parseBPMN(uuid: UUID, path: String){ // сюда вторым параметром будет приходить сам файл
     try {
         val file = File(path)
@@ -16,7 +38,10 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
 
         val processChildList = processNode.childNodes
         var processChild: Node
-        var outgoingList = arrayListOf<String>()
+
+        var incomingList = arrayListOf<CIncoming>()
+        var outgoingList = arrayListOf<COutgoing>()
+
         var nodeList: NodeList
 
         for (i:Int in 0..processChildList.length - 1) {
@@ -26,10 +51,10 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
 
             when(processChild.nodeName) {
                 "semantic:startEvent" -> {
-                    process.setStartEvent(
-                        CStartEvent(processChild.attributes.getNamedItem("name").nodeValue,
-                            processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-                            processChild.childNodes.item(1).textContent.substring(3)))
+//                    process.setStartEvent(
+//                        CStartEvent(processChild.attributes.getNamedItem("name").nodeValue,
+//                            processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+//                            processChild.childNodes.item(1).textContent.substring(3)))
                 }
 
                 "semantic:task" -> {
@@ -40,16 +65,16 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
                 }
 
                 "semantic:endEvent" -> {
-                    process.addEndEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-                        CEndEvent(processChild.attributes.getNamedItem("name").nodeValue,
-                            processChild.childNodes.item(1).textContent.substring(3)))
+//                    process.addEndEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+//                        CEndEvent(processChild.attributes.getNamedItem("name").nodeValue,
+//                            processChild.childNodes.item(1).textContent.substring(3)))
                 }
 
                 "semantic:intermediateCatchEvent" -> {
-                    process.addIntermediateCatchEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-                        CIntermediateCatchEvent(processChild.attributes.getNamedItem("name").nodeValue,
-                            processChild.childNodes.item(1).textContent.substring(3),
-                            processChild.childNodes.item(3).textContent.substring(3)))
+//                    process.addIntermediateCatchEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+//                        CIntermediateCatchEvent(processChild.attributes.getNamedItem("name").nodeValue,
+//                            processChild.childNodes.item(1).textContent.substring(3),
+//                            processChild.childNodes.item(3).textContent.substring(3)))
                 }
 
                 "semantic:exclusiveGateway" -> {
@@ -57,6 +82,7 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
 
                     for (i:Int in 2..nodeList.length - 1) {
                         if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
                         outgoingList.add(nodeList.item(i).textContent.substring(3))
                     }
                     process.addExclusiveGateway(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
@@ -73,5 +99,5 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
     }
 }
 fun main(args: Array<String>) {
-    parseBPMN(UUID.randomUUID(), "C:\\Users\\cepeh\\OneDrive\\Рабочий стол\\sel.bpmn")
+    parseBPMN(UUID.randomUUID(), "C:\\Users\\Сергей\\Desktop\\sel.bpmn")
 }
