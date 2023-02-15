@@ -1,16 +1,15 @@
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import java.io.File
 import java.util.UUID
 import javax.xml.parsers.DocumentBuilderFactory
 
-fun getEvent(curNode: Node, nodeList: NodeList, eventType: EEventType) {
-    var nodeList = curNode.childNodes
+fun getEvent(curNode: Node, eventType: EEventType): CEvent {
+    val nodeList = curNode.childNodes
 
-    var incomingList = arrayListOf<CIncoming>()
-    var outgoingList = arrayListOf<COutgoing>()
+    val incomingList = arrayListOf<CIncoming>()
+    val outgoingList = arrayListOf<COutgoing>()
 
-    for (i:Int in 2..nodeList.length - 1) {
+    for (i:Int in 0..nodeList.length - 1) {
         if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
 
         if (nodeList.item(i).nodeName == "semantic:incoming") {
@@ -20,29 +19,45 @@ fun getEvent(curNode: Node, nodeList: NodeList, eventType: EEventType) {
         if (nodeList.item(i).nodeName == "semantic:outgoing") {
             outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
         }
-
     }
 
-
+    return CEvent(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList, eventType)
 }
 
-fun parseBPMN(uuid: UUID, path: String){ // сюда вторым параметром будет приходить сам файл
+fun getGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo правило выбора
+    val nodeList = curNode.childNodes
+
+    val incomingList = arrayListOf<CIncoming>()
+    val outgoingList = arrayListOf<COutgoing>()
+
+    for (i:Int in 0..nodeList.length - 1) {
+        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
+        if (nodeList.item(i).nodeName == "semantic:incoming") {
+            incomingList.add(CIncoming(nodeList.item(i).textContent.substring(3)))
+        }
+
+        if (nodeList.item(i).nodeName == "semantic:outgoing") {
+            outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
+        }
+    }
+
+    return CGateway(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList, gatewayType)
+}
+
+fun parseBPMN(uuid: UUID, file: File): CProcess? { // todo MultipartFile -> File
+    var process: CProcess? = null
+
     try {
-        val file = File(path)
         val dbf = DocumentBuilderFactory.newInstance()
         val doc = dbf.newDocumentBuilder().parse(file)
 
         val processNode = doc.getElementsByTagName("semantic:process").item(0)
 
-        val process = CProcess(processNode.attributes.getNamedItem("name").nodeValue, uuid)
+        process = CProcess(processNode.attributes.getNamedItem("name").nodeValue, uuid)
 
         val processChildList = processNode.childNodes
         var processChild: Node
-
-        var incomingList = arrayListOf<CIncoming>()
-        var outgoingList = arrayListOf<COutgoing>()
-
-        var nodeList: NodeList
 
         for (i:Int in 0..processChildList.length - 1) {
             processChild = processChildList.item(i)
@@ -51,10 +66,8 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
 
             when(processChild.nodeName) {
                 "semantic:startEvent" -> {
-//                    process.setStartEvent(
-//                        CStartEvent(processChild.attributes.getNamedItem("name").nodeValue,
-//                            processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-//                            processChild.childNodes.item(1).textContent.substring(3)))
+                    process.addEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+                                    getEvent(processChild, EEventType.START))
                 }
 
                 "semantic:task" -> {
@@ -65,39 +78,31 @@ fun parseBPMN(uuid: UUID, path: String){ // сюда вторым парамет
                 }
 
                 "semantic:endEvent" -> {
-//                    process.addEndEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-//                        CEndEvent(processChild.attributes.getNamedItem("name").nodeValue,
-//                            processChild.childNodes.item(1).textContent.substring(3)))
+                    process.addEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+                        getEvent(processChild, EEventType.END))
                 }
 
                 "semantic:intermediateCatchEvent" -> {
-//                    process.addIntermediateCatchEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-//                        CIntermediateCatchEvent(processChild.attributes.getNamedItem("name").nodeValue,
-//                            processChild.childNodes.item(1).textContent.substring(3),
-//                            processChild.childNodes.item(3).textContent.substring(3)))
+                    process.addEvent(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+                        getEvent(processChild, EEventType.INTERMEDIATE))
                 }
 
                 "semantic:exclusiveGateway" -> {
-                    nodeList = processChild.childNodes
-
-                    for (i:Int in 2..nodeList.length - 1) {
-                        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
-
-                        outgoingList.add(nodeList.item(i).textContent.substring(3))
-                    }
-                    process.addExclusiveGateway(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-                        CExclusiveGateway(processChild.attributes.getNamedItem("name").nodeValue,
-                            processChild.childNodes.item(1).textContent.substring(3),
-                            outgoingList))
+                    process.addGateway(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
+                                    getGateway(processChild, EGateway.EXCLUSIVE))
                 }
             }
         }
-        var x = 5
-
     }catch(e: Exception) {
         println("Error: " + e.message)
     }
+
+    return process
 }
 fun main(args: Array<String>) {
-    parseBPMN(UUID.randomUUID(), "C:\\Users\\Сергей\\Desktop\\sel.bpmn")
+
+    val file = File("C:\\Users\\cepeh\\OneDrive\\Рабочий стол\\sel.bpmn")
+
+    val process = parseBPMN(UUID.randomUUID(), file)
+
 }
