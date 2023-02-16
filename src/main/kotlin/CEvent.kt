@@ -3,8 +3,8 @@ class CEvent (
     _outgoingList: ArrayList<COutgoing>, _eventType: EEventType
     )
 {
-    val name:String = _name
-    val incomingList: ArrayList<CIncoming> = _incomingList
-    val outgoingList: ArrayList<COutgoing> = _outgoingList
-    val eventType: EEventType = _eventType
+    val name = _name
+    val incomingList = _incomingList
+    val outgoingList = _outgoingList
+    val eventType = _eventType
 }

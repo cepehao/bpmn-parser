@@ -3,8 +3,8 @@ class CGateway (
     _outgoingList: ArrayList<COutgoing>, _gatewayType: EGateway
 )
 {
-    val name:String = _name
-    val incomingList: ArrayList<CIncoming> = _incomingList
-    val outgoingList: ArrayList<COutgoing> = _outgoingList
-    val gatewayType: EGateway = _gatewayType
+    val name = _name
+    val incomingList = _incomingList
+    val outgoingList = _outgoingList
+    val gatewayType = _gatewayType
 }

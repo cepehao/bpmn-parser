@@ -45,6 +45,27 @@ fun getGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo пра�
     return CGateway(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList, gatewayType)
 }
 
+fun getTask(curNode: Node): CTask {
+    val nodeList = curNode.childNodes
+
+    val incomingList = arrayListOf<CIncoming>()
+    val outgoingList = arrayListOf<COutgoing>()
+
+    for (i:Int in 0..nodeList.length - 1) {
+        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
+        if (nodeList.item(i).nodeName == "semantic:incoming") {
+            incomingList.add(CIncoming(nodeList.item(i).textContent.substring(3)))
+        }
+
+        if (nodeList.item(i).nodeName == "semantic:outgoing") {
+            outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
+        }
+    }
+
+    return CTask(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList)
+}
+
 fun parseBPMN(uuid: UUID, file: File): CProcess? { // todo MultipartFile -> File
     var process: CProcess? = null
 
@@ -72,9 +93,7 @@ fun parseBPMN(uuid: UUID, file: File): CProcess? { // todo MultipartFile -> File
 
                 "semantic:task" -> {
                     process.addTask(processChild.attributes.getNamedItem("id").nodeValue.substring(3),
-                        CTask(processChild.attributes.getNamedItem("name").nodeValue,
-                            processChild.childNodes.item(1).textContent.substring(3),
-                            processChild.childNodes.item(3).textContent.substring(3)))
+                                    getTask(processChild))
                 }
 
                 "semantic:endEvent" -> {

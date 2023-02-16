@@ -3,8 +3,8 @@ import java.util.UUID
 //весь процесс
 class CProcess(_name: String, _id: UUID) {
 
-    val name: String = _name
-    val id: UUID = _id
+    val name = _name
+    val id = _id
 
 
     var tasks = mutableMapOf<String, CTask>()

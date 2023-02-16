@@ -1,8 +1,11 @@
 //задача
-class CTask(_name:String, _incomingId:String, _outgoingId:String) {
+class CTask(
+    _name:String, _incomingList: ArrayList<CIncoming>, _outgoingList: ArrayList<COutgoing>,
+    )
+{
 
-    val name:String = _name
-    val incomingId = _incomingId //предыдущее действие
-    val outgoingId = _outgoingId //следующее действие
+    val name = _name
+    val incomingList = _incomingList
+    val outgoingList = _outgoingList
 
 }
