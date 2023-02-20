@@ -1,10 +1,7 @@
-class CGateway (
-    _name: String, _incomingList: ArrayList<CIncoming>,
-    _outgoingList: ArrayList<COutgoing>, _gatewayType: EGateway
-)
+// логическое правило
+class CGateway (_name: String, _gatewayType: EGateway) : CProcessObject(_name)
 {
-    val name = _name
-    val incomingList = _incomingList
-    val outgoingList = _outgoingList
+
     val gatewayType = _gatewayType
+
 }
