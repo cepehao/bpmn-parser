@@ -1,5 +1,9 @@
 // задача
-class CTask(_name:String) : CProcessObject(_name)
+class CTask(
+    _name:String,
+    _incomingIdList: ArrayList<String>,
+    _outgoingIdList: ArrayList<String>
+) : CProcessItem(_name, _incomingIdList, _outgoingIdList)
 {
 
 }

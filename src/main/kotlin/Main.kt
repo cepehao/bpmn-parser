@@ -4,72 +4,73 @@ import java.io.File
 import java.util.UUID
 import javax.xml.parsers.DocumentBuilderFactory
 
-//fun getEvent(curNode: Node, eventType: EEventType): CEvent {
-//    val nodeList = curNode.childNodes
-//
-//    val incomingList = arrayListOf<CIncoming>()
-//    val outgoingList = arrayListOf<COutgoing>()
-//
-//    for (i:Int in 0..nodeList.length - 1) {
-//        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
-//
-//        if (nodeList.item(i).nodeName == "semantic:incoming") {
-//            incomingList.add(CIncoming(nodeList.item(i).textContent.substring(3)))
-//        }
-//
-//        if (nodeList.item(i).nodeName == "semantic:outgoing") {
-//            outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
-//        }
-//    }
-//
-//    return CEvent(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList, eventType)
-//}
-//
-//fun getGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo правило выбора
-//    val nodeList = curNode.childNodes
-//
-//    val incomingList = arrayListOf<CIncoming>()
-//    val outgoingList = arrayListOf<COutgoing>()
-//
-//    for (i:Int in 0..nodeList.length - 1) {
-//        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
-//
-//        if (nodeList.item(i).nodeName == "semantic:incoming") {
-//            incomingList.add(CIncoming(nodeList.item(i).textContent.substring(3)))
-//        }
-//
-//        if (nodeList.item(i).nodeName == "semantic:outgoing") {
-//            outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
-//        }
-//    }
-//
-//    return CGateway(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList, gatewayType)
-//}
-//
-//fun getTask(curNode: Node): CTask {
-//    val nodeList = curNode.childNodes
-//
-//    val incomingList = arrayListOf<CIncoming>()
-//    val outgoingList = arrayListOf<COutgoing>()
-//
-//    for (i:Int in 0..nodeList.length - 1) {
-//        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
-//
-//        if (nodeList.item(i).nodeName == "semantic:incoming") {
-//            incomingList.add(CIncoming(nodeList.item(i).textContent.substring(3)))
-//        }
-//
-//        if (nodeList.item(i).nodeName == "semantic:outgoing") {
-//            outgoingList.add(COutgoing(nodeList.item(i).textContent.substring(3)))
-//        }
-//    }
-//
-//    return CTask(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList)
-//}
+fun getEvent(curNode: Node, eventType: EEventType): CEvent {
+    val nodeList = curNode.childNodes
 
-fun getProcessObjectsMap(nodeList: NodeList): MutableMap<String, CProcessObject> {
+    val incomingList = arrayListOf<String>()
+    val outgoingList = arrayListOf<String>()
+
+    for (i:Int in 0..nodeList.length - 1) {
+        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
+        if (nodeList.item(i).nodeName == "semantic:incoming") {
+            incomingList.add(nodeList.item(i).textContent.substring(3))
+        }
+
+        if (nodeList.item(i).nodeName == "semantic:outgoing") {
+            outgoingList.add(nodeList.item(i).textContent.substring(3))
+        }
+    }
+
+    return CEvent(curNode.attributes.getNamedItem("name").nodeValue, eventType, incomingList, outgoingList)
+}
+
+fun getGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo правило выбора
+    val nodeList = curNode.childNodes
+
+    val incomingList = arrayListOf<String>()
+    val outgoingList = arrayListOf<String>()
+
+    for (i:Int in 0..nodeList.length - 1) {
+        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
+        if (nodeList.item(i).nodeName == "semantic:incoming") {
+            incomingList.add(nodeList.item(i).textContent.substring(3))
+        }
+
+        if (nodeList.item(i).nodeName == "semantic:outgoing") {
+            outgoingList.add(nodeList.item(i).textContent.substring(3))
+        }
+    }
+
+    return CGateway(curNode.attributes.getNamedItem("name").nodeValue, gatewayType, incomingList, outgoingList)
+}
+
+fun getTask(curNode: Node): CTask {
+    val nodeList = curNode.childNodes
+
+    val incomingList = arrayListOf<String>()
+    val outgoingList = arrayListOf<String>()
+
+    for (i:Int in 0..nodeList.length - 1) {
+        if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
+
+        if (nodeList.item(i).nodeName == "semantic:incoming") {
+            incomingList.add(nodeList.item(i).textContent.substring(3))
+        }
+
+        if (nodeList.item(i).nodeName == "semantic:outgoing") {
+            outgoingList.add(nodeList.item(i).textContent.substring(3))
+        }
+    }
+
+    return CTask(curNode.attributes.getNamedItem("name").nodeValue, incomingList, outgoingList)
+}
+
+// создаем карту всех процессов, вместе со строковыми идентификаторами связей
+fun getProcessObjectsMap(nodeList: NodeList): MutableMap<String, CProcessItem> {
     var node: Node
-    var processObjectsMap = mutableMapOf<String, CProcessObject>()
+    var processObjectsMap = mutableMapOf<String, CProcessItem>()
 
     for (i:Int in 0..nodeList.length - 1) {
         node = nodeList.item(i)
@@ -79,27 +80,27 @@ fun getProcessObjectsMap(nodeList: NodeList): MutableMap<String, CProcessObject>
         when(node.nodeName) {
             "semantic:startEvent" -> {
                 processObjectsMap.put(node.attributes.getNamedItem("id").nodeValue.substring(3),
-                                CEvent(node.attributes.getNamedItem("name").nodeValue, EEventType.START))
+                                getEvent(node, EEventType.START))
             }
 
             "semantic:task" -> {
                 processObjectsMap.put(node.attributes.getNamedItem("id").nodeValue.substring(3),
-                    CTask(node.attributes.getNamedItem("name").nodeValue))
+                                getTask(node))
             }
 
             "semantic:endEvent" -> {
                 processObjectsMap.put(node.attributes.getNamedItem("id").nodeValue.substring(3),
-                    CEvent(node.attributes.getNamedItem("name").nodeValue, EEventType.END))
+                    getEvent(node, EEventType.END))
             }
 
             "semantic:intermediateCatchEvent" -> {
                 processObjectsMap.put(node.attributes.getNamedItem("id").nodeValue.substring(3),
-                    CEvent(node.attributes.getNamedItem("name").nodeValue, EEventType.INTERMEDIATE))
+                    getEvent(node, EEventType.INTERMEDIATE))
             }
 
             "semantic:exclusiveGateway" -> {
                 processObjectsMap.put(node.attributes.getNamedItem("id").nodeValue.substring(3),
-                    CGateway(node.attributes.getNamedItem("name").nodeValue, EGateway.EXCLUSIVE))
+                    getGateway(node, EGateway.EXCLUSIVE))
             }
         }
     }
@@ -107,47 +108,47 @@ fun getProcessObjectsMap(nodeList: NodeList): MutableMap<String, CProcessObject>
     return processObjectsMap
 }
 
-fun addConnections(process: CProcess, processObjectMap: MutableMap<String, CProcessObject>, processChildList: NodeList) {
-    val listobjectNames = arrayListOf<String>("semantic:startEvent", "semantic:task", "semantic:endEvent", "semantic:intermediateCatchEvent", "semantic:exclusiveGateway")
+//проверить список строковых идентификаторов на входы/выходы в объекты процесса, вернуть список объектов процесса
+fun createIncomingList (items: MutableMap<String, CProcessItem>, incomingIdList: ArrayList<String>): ArrayList<CProcessItem?> {
+    var incomingList = arrayListOf<CProcessItem?>()
 
-    var processChild: Node
-
-    for (i:Int in 0..processChildList.length - 1) {
-        processChild = processChildList.item(i)
-
-        if (processChild == null || processChild.nodeType != Node.ELEMENT_NODE || processChild.nodeName !in listobjectNames) continue
-
-
-
-
-        val nodeList = processChild.childNodes
-
-        var id: String = ""
-        var incomingList = arrayListOf<CProcessObject?>()
-        var outgoingList = arrayListOf<CProcessObject?>()
-
-        for (i:Int in 0..nodeList.length - 1) {
-            if (nodeList.item(i).nodeType != Node.ELEMENT_NODE) continue
-
-            id = nodeList.item(i).textContent.substring(3)
-
-
-            if (nodeList.item(i).nodeName == "semantic:incoming") {
-
-                incomingList.add(processObjectMap.get(id))
-            }
-
-            if (nodeList.item(i).nodeName == "semantic:outgoing") {
-                outgoingList.add(processObjectMap.get(id))
-            }
-
-
+    for (id in incomingIdList) {
+        for (item in items.values) {
+            if (item.checkOutgoing(id)) incomingList.add(item)
         }
-        processObjectMap[id]?.addConnectionList(incomingList, outgoingList)
-
-
-
     }
+    return incomingList
+}
+
+fun createOutgoingList (items: MutableMap<String, CProcessItem>, outgoingIdList: ArrayList<String>): ArrayList<CProcessItem?> {
+    var outgoingList = arrayListOf<CProcessItem?>()
+
+    for (id in outgoingIdList) {
+        for (item in items.values) {
+            if (item.checkIncoming(id)) outgoingList.add(item)
+        }
+    }
+    return outgoingList
+}
+
+fun addConnections(items: MutableMap<String, CProcessItem>) {
+
+    var incomingIdList = arrayListOf<String>()
+    var outgoingIdList = arrayListOf<String>()
+    var incomingList = arrayListOf<CProcessItem?>()
+    var outgoingList = arrayListOf<CProcessItem?>()
+
+    for (i in items.entries.iterator()) {
+        incomingIdList = i.value.getIncomingIdList() // получили строковые идентификаторы связей из i-ого объекта
+        outgoingIdList = i.value.getOutgoingIdList()
+
+        incomingList = createIncomingList(items, incomingIdList)
+        outgoingList = createOutgoingList(items, outgoingIdList)
+
+        i.value.incomingList = incomingList
+        i.value.outgoingList = outgoingList
+    }
+
 }
 
 fun parseBPMN(uuid: UUID, file: File): CProcess? { // todo MultipartFile -> File
@@ -165,9 +166,10 @@ fun parseBPMN(uuid: UUID, file: File): CProcess? { // todo MultipartFile -> File
 
         var processObjectsMap = getProcessObjectsMap(processChildList)
 
-        addConnections(process, processObjectsMap, processChildList)
 
+        addConnections(processObjectsMap)
 
+        var x = 5
         //var processChild: Node
 
 
