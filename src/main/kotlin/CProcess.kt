@@ -1,6 +1,6 @@
 import java.util.UUID
 
-//весь процесс
+// весь процесс
 class CProcess(_name: String, _id: UUID) {
 
     val name = _name
