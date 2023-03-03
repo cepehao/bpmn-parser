@@ -1,4 +1,4 @@
 // типы логических правил
-enum class EGateway {
+enum class EGatewayType {
     EXCLUSIVE
 }

@@ -29,7 +29,7 @@ fun createEvent(curNode: Node, eventType: EEventType): CEvent {
     return CEvent(curNode.attributes.getNamedItem("name").nodeValue, incomingIdList, outgoingIdList, eventType)
 }
 
-fun createGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo правило выбора
+fun createGateway(curNode: Node, gatewayType: EGatewayType): CGateway { // todo правило выбора
     val nodeList = curNode.childNodes
     var node: Node
 
@@ -111,7 +111,7 @@ fun getProcessObjectsMap(nodeList: NodeList): MutableMap<String, CProcessItem> {
 
             "semantic:exclusiveGateway" -> {
                 processObjectsMap.put(node.attributes.getNamedItem("id").nodeValue.substring(3),
-                    createGateway(node, EGateway.EXCLUSIVE))
+                    createGateway(node, EGatewayType.EXCLUSIVE))
             }
         }
     }
