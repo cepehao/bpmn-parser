@@ -26,7 +26,7 @@ fun createEvent(curNode: Node, eventType: EEventType): CEvent {
         }
     }
 
-    return CEvent(curNode.attributes.getNamedItem("name").nodeValue, eventType, incomingIdList, outgoingIdList)
+    return CEvent(curNode.attributes.getNamedItem("name").nodeValue, incomingIdList, outgoingIdList, eventType)
 }
 
 fun createGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo правило выбора
@@ -50,7 +50,7 @@ fun createGateway(curNode: Node, gatewayType: EGateway): CGateway { // todo пр
         }
     }
 
-    return CGateway(curNode.attributes.getNamedItem("name").nodeValue, gatewayType, incomingIdList, outgoingIdList)
+    return CGateway(curNode.attributes.getNamedItem("name").nodeValue, incomingIdList, outgoingIdList, gatewayType)
 }
 
 fun createTask(curNode: Node): CTask {
@@ -204,11 +204,12 @@ fun parseBPMN(uuid: UUID, file: File): CProcess? { // todo MultipartFile -> File
     return process
 }
 
-
 fun main(args: Array<String>) {
 
     val file = File("C:\\Users\\cepeh\\OneDrive\\Рабочий стол\\sel.bpmn")
 
     val process = parseBPMN(UUID.randomUUID(), file)
+
+
 
 }

@@ -1,16 +1,15 @@
 import java.util.UUID
 
 // весь процесс
-class CProcess(_name: String, _id: UUID) {
-
-    val name = _name
-    val id = _id
-
+class CProcess(
+    name: String,
+    id: UUID
+)
+{
 
     var tasks = mutableMapOf<String, CTask>()
     var events = mutableMapOf<String, CEvent>()
     var gateways = mutableMapOf<String, CGateway>()
-
 
     fun addTask(id: String, task: CTask) {
         tasks[id] = task
